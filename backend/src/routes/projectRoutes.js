@@ -1,13 +1,22 @@
-import express from 'express'
-import {getProjects, createProject, getProject, updateProject, deleteProject} from '../controllers/projectController'
+import express from 'express';
+const router = express.Router();
+import { createProject, getAllProjects, getProjectById, updateProject, deleteProject } from '../controllers/projectController.js';
 
 
+// Створення нового проекту
+router.post('/', createProject);
 
-const router = express.Router()
+// Отримання всіх проектів
+router.get('/', getAllProjects);
 
-router.route('/').get(getProjects).post(createProject)
-router.route('/:id').get(getProject).put(updateProject).delete(deleteProject)
+// Отримання проекту за ID
+router.get('/:id', getProjectById);
+
+// Оновлення проекту за ID
+router.put('/:id', updateProject);
+
+// Видалення проекту за ID
+router.delete('/:id', deleteProject);
 
 
-
-export default router
+export default router;

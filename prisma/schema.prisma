@@ -1,0 +1,69 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                Int             @id @default(autoincrement())
+  email             String          @unique
+  password          String
+  projects          Project[]       @relation(name: "ProjectAuthor")
+  comments          Comment[]
+  profile           Profile?
+  memberInProjects ProjectMember[]
+  assignedTasks    Task[]          @relation(name: "AssignedTasks") // Зворотній зв'язок для Task
+}
+
+model Profile {
+  id     Int     @id @default(autoincrement())
+  userId Int     @unique
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Project {
+  id          Int            @id @default(autoincrement())
+  name        String
+  description String?
+  author      User           @relation(name: "ProjectAuthor", fields: [authorId], references: [id])
+  authorId    Int
+  tasks       Task[]
+  members     ProjectMember[]
+}
+
+
+model Task {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  status      String   @default("Open")
+  dueDate     DateTime?
+  priority    String   @default("Medium")
+  project     Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId   Int
+  assignee    User?    @relation(name: "AssignedTasks", fields: [assigneeId], references: [id]) // Іменований зв'язок
+  assigneeId  Int?
+  comments   Comment[]
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  text      String
+  createdAt DateTime @default(now())
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  taskId    Int
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  Int
+}
+
+model ProjectMember {
+  projectId Int
+  userId    Int
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, userId])
+}
