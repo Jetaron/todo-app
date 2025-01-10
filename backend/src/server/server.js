@@ -1,3 +1,4 @@
+import cors from 'cors';
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
 import projectRoutes from './routes/projectRoutes.js'; // Імпорт маршрутів для проектів
@@ -6,7 +7,7 @@ import userRoutes from './routes/userRoutes.js';     // Імпорт маршр�
 
 const prisma = new PrismaClient();
 const app = express();
-const port = 3001;
+const port = 5000;
 
 app.use(express.json());
 
@@ -42,5 +43,8 @@ process.on('SIGINT', async () => {
   })
 })
 
+app.use(cors());
 
-export default app;
+"scripts"; {
+  "start"; "node src/server" 
+};
